@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آزمایشگاه تعاملی ریاضی - متوسطه اول</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+    * { box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+    body { margin: 0; padding: 0; background: #0f172a; color: #f8fafc; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    
+    header { text-align: center; margin-bottom: 25px; }
+    header h1 { color: #38bdf8; margin: 0 0 10px; font-size: 1.8rem; }
+    header p { color: #94a3b8; margin: 0; font-size: 0.95rem; }
+
+    /* تب‌ها */
+    .tabs-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+    .tab-btn {
+      background: #1e293b; border: 1px solid #334155; color: #cbd5e1;
+      padding: 10px 18px; border-radius: 10px; cursor: pointer;
+      font-size: 0.95rem; font-weight: 500; transition: all 0.2s;
+    }
+    .tab-btn:hover { background: #334155; color: #fff; }
+    .tab-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 12px rgba(56, 189, 248, 0.4); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* کارت و چیدمان */
+    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 14px; padding: 20px; }
+    .card-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+
+    /* ورودی‌ها و کلیدها */
+    label { display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 5px; }
+    input[type="number"], select, textarea {
+      width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff;
+      padding: 8px 12px; border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    input[type="number"]:focus { border-color: #38bdf8; }
+    input[type="range"] { width: 100%; accent-color: #38bdf8; }
+
+    .btn {
+      background: #0284c7; color: white; border: none; padding: 10px 18px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold;
+      transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn:hover { background: #0369a1; }
+    .btn-emerald { background: #059669; }
+    .btn-emerald:hover { background: #047857; }
+
+    /* بوم نقاشی / کانواس */
+    .canvas-box {
+      width: 100%; height: 350px; background: #090d16; border-radius: 10px;
+      border: 1px solid #334155; position: relative; overflow: hidden;
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    /* نمایش محاسبات و جعبه نتایج */
+    .result-box { background: #090d16; border-radius: 8px; padding: 14px; margin-top: 15px; border: 1px solid #334155; }
+    .step-text { font-size: 0.95rem; color: #cbd5e1; line-height: 2; }
+    .highlight { color: #facc15; font-weight: bold; }
+    .highlight-blue { color: #38bdf8; font-weight: bold; }
+
+    footer { text-align: center; margin-top: 40px; padding: 15px; border-top: 1px solid #334155; color: #64748b; font-size: 0.9rem; }
+    .designer-badge {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-weight: 800; font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>آزمایشگاه هوشمند ریاضی </h1>
+    <p>مجموعه ابزارهای شبیه‌سازی و حل گام‌به‌گام مفاهیم ریاضی متوسطه اول</p>
+  </header>
+
+  <!-- منوی تب‌ها -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">دستگاه معادلات خطی</button>
+    <button class="tab-btn" onclick="switchTab(1)">رسم و تحلیل توابع</button>
+    <button class="tab-btn" onclick="switchTab(2)">کارگاه قضیه فیثاغورس</button>
+    <button class="tab-btn" onclick="switchTab(3)">مختصات و بردارها</button>
+    <button class="tab-btn" onclick="switchTab(4)">شبیه‌ساز احتمال</button>
+    <button class="tab-btn" onclick="switchTab(5)">آمار و تحلیل داده</button>
+    <button class="tab-btn" onclick="switchTab(6)">مساحت اشکال</button>
+    <button class="tab-btn" onclick="switchTab(7)"> اتحادها</button>
+    <button class="tab-btn" onclick="switchTab(8)"> حجم اشکال</button>
+  </div>
+
+  <!-- تب ۱: دستگاه معادلات خطی (به روش حذفی) -->
+  <div class="tab-content active" id="tab-0">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">ضرایب دو معادله خطی</div>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">فرم استاندارد خط: <span dir="ltr" class="highlight-blue">ax + by = c</span></p>
+        
+        <div style="background:#090d16; padding:12px; border-radius:8px; margin-bottom:12px; border:1px solid #1e293b;">
+          <b style="color:#2dd4bf;">معادله (۱):</b>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;" dir="ltr">
+            <input type="number" id="eq1_a" value="2" oninput="solveSystem()"> <span>x +</span>
+            <input type="number" id="eq1_b" value="1" oninput="solveSystem()"> <span>y =</span>
+            <input type="number" id="eq1_c" value="5" oninput="solveSystem()">
+          </div>
+        </div>
+
+        <div style="background:#090d16; padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid #1e293b;">
+          <b style="color:#f59e0b;">معادله (۲):</b>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;" dir="ltr">
+            <input type="number" id="eq2_a" value="1" oninput="solveSystem()"> <span>x -</span>
+            <input type="number" id="eq2_b" value="1" oninput="solveSystem()"> <span>y =</span>
+            <input type="number" id="eq2_c" value="1" oninput="solveSystem()">
+          </div>
+        </div>
+
+        <div class="result-box">
+          <div style="font-weight:bold; margin-bottom:8px; color:#38bdf8;">مراحل حل دستگاه به روش حذفی (پایه نهم):</div>
+          <div id="systemSteps" class="step-text">در حال محاسبه...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">نمایش هندسی محل برخورد دو خط</div>
+        <div class="canvas-box">
+          <canvas id="systemCanvas" width="550" height="350"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-around; margin-top:10px; font-size:0.85rem;">
+          <span style="color:#2dd4bf;">■ خط (۱)</span>
+          <span style="color:#f59e0b;">■ خط (۲)</span>
+          <span style="color:#ef4444;">● نقطه تقاطع (پاسخ دستگاه)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۲: رسم توابع خطی و سهمی -->
+  <div class="tab-content" id="tab-1">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">تنظیم ضابطه تابع</div>
+        <div style="margin-bottom:12px;">
+          <label>نوع تابع:</label>
+          <select id="funcType" onchange="updateFunc()">
+            <option value="linear">خطی: y = ax + b</option>
+            <option value="quad">درجه دو (سهمی): y = ax² + bx + c</option>
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
+          <div><label>ضریب a:</label><input type="number" id="fn_a" value="1" step="0.5" oninput="updateFunc()"></div>
+          <div><label>ضریب b:</label><input type="number" id="fn_b" value="0" step="0.5" oninput="updateFunc()"></div>
+          <div id="box_fn_c" style="display:none;"><label>ضریب c:</label><input type="number" id="fn_c" value="0" step="0.5" oninput="updateFunc()"></div>
+        </div>
+        <div class="result-box">
+          <div id="funcInfo" class="step-text"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">نمودار مختصات تابع</div>
+        <div class="canvas-box">
+          <canvas id="funcCanvas" width="550" height="350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۳: قضیه فیثاغورس -->
+  <div class="tab-content" id="tab-2">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">طول اضلاع زاویه قائمه</div>
+        <div style="margin-bottom:15px;">
+          <label>طول ضلع اول (a): <span id="val_a" class="highlight-blue">6</span></label>
+          <input type="range" id="side_a" min="1" max="100" value="6" oninput="syncPythFromRange('a')">
+          <div style="display:flex; gap:8px; margin-top:8px;" dir="ltr">
+            <input type="number" id="side_a_manual" min="0.01" step="0.01" value="6" oninput="syncPythFromManual('a')" aria-label="ورود دستی ضلع a">
+          </div>
+        </div>
+        <div style="margin-bottom:15px;">
+          <label>طول ضلع دوم (b): <span id="val_b" class="highlight-blue">8</span></label>
+          <input type="range" id="side_b" min="1" max="100" value="8" oninput="syncPythFromRange('b')">
+          <div style="display:flex; gap:8px; margin-top:8px;" dir="ltr">
+            <input type="number" id="side_b_manual" min="0.01" step="0.01" value="8" oninput="syncPythFromManual('b')" aria-label="ورود دستی ضلع b">
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:#94a3b8;margin:0;">برای اعداد بزرگ‌تر یا اعشاری، مقدار را مستقیماً در کادر عددی وارد کنید.</p>
+        <div class="result-box">
+          <div class="step-text" id="pythagorasCalc"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">شبیه‌سازی مساحت مربع‌ها بر روی اضلاع</div>
+        <div class="canvas-box">
+          <canvas id="pythCanvas" width="550" height="350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۴: بردارها -->
+  <div class="tab-content" id="tab-3">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">مختصات بردارها</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div><label>بردار اول X (a₁):</label><input type="number" id="v1_x" value="3" oninput="drawVectors()"></div>
+          <div><label>بردار اول Y (a₂):</label><input type="number" id="v1_y" value="2" oninput="drawVectors()"></div>
+          <div><label>بردار دوم X (b₁):</label><input type="number" id="v2_x" value="-1" oninput="drawVectors()"></div>
+          <div><label>بردار دوم Y (b₂):</label><input type="number" id="v2_y" value="3" oninput="drawVectors()"></div>
+        </div>
+        <div class="result-box">
+          <div class="step-text" id="vectorCalc"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">نمایش بردار برآیند (مجموع)</div>
+        <div class="canvas-box">
+          <canvas id="vectorCanvas" width="550" height="350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۵: شبیه‌ساز احتمال -->
+  <div class="tab-content" id="tab-4">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">شبیه‌سازی پرتاب تاس</div>
+        <p style="font-size:0.85rem; color:#94a3b8;">آزمایش قانون اعداد بزرگ با تکرار پرتاب:</p>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+          <button class="btn" onclick="rollDice(1)">۱ بار پرتاب</button>
+          <button class="btn btn-emerald" onclick="rollDice(50)">۵۰ بار پرتاب</button>
+          <button class="btn" style="background:#dc2626;" onclick="resetDice()">شروع دوباره</button>
+        </div>
+        <div class="result-box">
+          <div class="step-text" id="diceStats">کل پرتاب‌ها: ۰</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">فراوانی نسبی هر عدد (۱ تا ۶)</div>
+        <div class="canvas-box">
+          <canvas id="probCanvas" width="550" height="350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۶: آمار -->
+  <div class="tab-content" id="tab-5">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">ورود داده‌های آماری</div>
+        <label>اعداد را با کاما (، یا ,) جدا کنید:</label>
+        <textarea id="dataInput" rows="3" oninput="calcStats()">12, 15, 12, 18, 20, 15, 12, 14, 19</textarea>
+        <div class="result-box">
+          <div class="step-text" id="statResults"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">نمودار توزیع داده‌ها</div>
+        <div class="canvas-box">
+          <canvas id="statCanvas" width="550" height="350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- تب ۷: کارگاه مساحت اشکال -->
+  <div class="tab-content" id="tab-6">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">📐 کارگاه تعاملی مساحت اشکال</div>
+        <div style="margin-bottom:12px;">
+          <label>انتخاب شکل:</label>
+          <select id="areaShape" onchange="updateAreaShape()">
+            <option value="square">مربع</option>
+            <option value="rectangle">مستطیل</option>
+            <option value="triangle">مثلث</option>
+            <option value="parallelogram">متوازی‌الاضلاع</option>
+            <option value="rhombus">لوزی</option>
+            <option value="trapezoid">ذوزنقه</option>
+            <option value="circle">دایره</option>
+          </select>
+        </div>
+        <div id="areaInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;"></div>
+        <div class="result-box">
+          <div class="step-text" id="areaCalc"></div>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn" onclick="newAreaChallenge()">🎯 چالش مساحت</button>
+        </div>
+        <div class="result-box" id="areaChallengeBox" style="display:none;">
+          <div class="step-text" id="areaChallengeText"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;" dir="ltr">
+            <input type="number" id="areaChallengeAnswer" step="0.01" placeholder="پاسخ">
+            <button class="btn btn-emerald" onclick="checkAreaChallenge()">بررسی</button>
+          </div>
+          <div id="areaChallengeResult" style="margin-top:8px;font-weight:bold;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">نمایش هندسی و فرمول</div>
+        <div class="canvas-box">
+          <canvas id="areaCanvas" width="550" height="350"></canvas>
+        </div>
+        <div class="result-box" style="margin-top:10px;">
+          <div class="step-text" id="areaFormula"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- تب ۸: کارگاه تعاملی اتحادها -->
+  <div class="tab-content" id="tab-7">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">🧩 کارگاه تعاملی اتحادها</div>
+        <p style="font-size:.85rem;color:#94a3b8;margin-bottom:14px;">با تغییر مقدارهای <span class="highlight-blue">a</span> و <span class="highlight-blue">b</span>، رابطه اتحاد و نمایش هندسی را مشاهده کنید.</p>
+        <label>انتخاب اتحاد:</label>
+        <select id="identityType" onchange="updateIdentityWorkshop()">
+          <option value="sumSquare">مربع مجموع: (a + b)²</option>
+          <option value="diffSquare">مربع تفاضل: (a - b)²</option>
+          <option value="sumDiff">مجموع و تفاضل: (a + b)(a - b)</option>
+        </select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;">
+          <div><label>a</label><input type="number" id="identityA" value="4" step="0.1" oninput="updateIdentityWorkshop()"></div>
+          <div><label>b</label><input type="number" id="identityB" value="2" step="0.1" oninput="updateIdentityWorkshop()"></div>
+        </div>
+        <div class="result-box"><div class="step-text" id="identityResult"></div></div>
+        <div class="result-box" style="margin-top:10px;background:#090d16;">
+          <div style="font-weight:bold;color:#2dd4bf;margin-bottom:7px;">💡 نکته آموزشی</div>
+          <div class="step-text" id="identityTip"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📐 نمایش هندسی اتحاد</div>
+        <div class="canvas-box"><canvas id="identityCanvas" width="550" height="350"></canvas></div>
+        <div class="result-box" style="margin-top:10px;"><div class="step-text" id="identityFormula"></div></div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-title">🔎 تشخیص و بازنویسی اتحاد</div>
+        <p style="font-size:.85rem;color:#94a3b8;">عبارت را وارد کنید تا شکل مناسب اتحاد را ببینید.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <div><label>متغیر</label><input id="identityVar" type="text" dir="ltr" value="x" maxlength="2" placeholder="x"></div>
+          <div><label>عدد داخل پرانتز / جمله دوم</label><input id="identityK" type="number" dir="ltr" value="3" step="0.1" placeholder="3"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <div><label>ضریب جمله میانی</label><input id="identityMid" type="number" dir="ltr" value="6" step="0.1" placeholder="6"></div>
+          <div><label>عدد ثابت</label><input id="identityConst" type="number" dir="ltr" value="9" step="0.1" placeholder="9"></div>
+        </div>
+        <p style="font-size:.78rem;color:#94a3b8;margin:8px 0 0;">مثلاً برای x² + 6x + 9، فقط اعداد 6 و 9 را وارد کنید؛ نیازی به نوشتن توان نیست.</p>
+        <button class="btn btn-emerald" style="margin-top:10px;" onclick="recognizeIdentityFromInputs()">تشخیص و بازنویسی</button>
+        <div class="result-box" style="margin-top:10px;"><div class="step-text" id="identityRecognition"></div></div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(148,163,184,.18);">
+          <div style="font-weight:bold;color:#fbbf24;margin-bottom:8px;">🧩 اتحاد جمله مشترک</div>
+          <p style="font-size:.78rem;color:#94a3b8;margin:0 0 9px;">دو عدد داخل پرانتز را وارد کنید؛ سایت بازنویسی اتحاد را انجام می‌دهد.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div><label>عدد اول (a)</label><input id="commonA" type="number" dir="ltr" value="2" step="0.1"></div>
+            <div><label>عدد دوم (b)</label><input id="commonB" type="number" dir="ltr" value="5" step="0.1"></div>
+          </div>
+          <button class="btn" style="margin-top:10px;" onclick="showCommonTermIdentity()">نمایش بازنویسی</button>
+          <div class="result-box" style="margin-top:10px;"><div class="step-text" id="commonTermResult"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 چالش اتحادها</div>
+        <p style="font-size:.85rem;color:#94a3b8;">اتحاد مناسب را برای عبارت نمایش‌داده‌شده انتخاب کنید.</p>
+        <div id="identityChallengeText" class="result-box" style="font-size:1.05rem;text-align:center;direction:ltr;"></div>
+        <select id="identityChallengeAnswer" style="margin-top:10px;">
+          <option value="">انتخاب کنید...</option>
+          <option value="sumSquare">مربع مجموع</option>
+          <option value="diffSquare">مربع تفاضل</option>
+          <option value="sumDiff">مجموع و تفاضل</option>
+          <option value="commonTerm">جمله مشترک</option>
+          <option value="none">هیچ‌کدام</option>
+        </select>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn" onclick="checkIdentityChallenge()">بررسی پاسخ</button>
+          <button class="btn" onclick="newIdentityChallenge()">سؤال جدید</button>
+        </div>
+        <div id="identityChallengeResult" style="margin-top:10px;font-weight:bold;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تب ۹: حجم اشکال ساده -->
+  <div class="tab-content" id="tab-8">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title">🧊 کارگاه تعاملی حجم اشکال</div>
+        <p style="font-size:.85rem;color:#94a3b8;margin-bottom:14px;">اندازه‌ها را وارد کنید تا حجم جسم به‌صورت لحظه‌ای محاسبه شود.</p>
+        <label>انتخاب شکل:</label>
+        <select id="volumeShape" onchange="updateVolumeShape()">
+          <option value="cube">مکعب</option>
+          <option value="cuboid">مکعب‌مستطیل</option>
+          <option value="cylinder">استوانه</option>
+          <option value="prism">منشور ساده</option>
+          <option value="pyramid">هرم ساده</option>
+        </select>
+        <div id="volumeInputs" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;"></div>
+        <div class="result-box"><div class="step-text" id="volumeCalc"></div></div>
+        <button class="btn" style="margin-top:12px;" onclick="newVolumeChallenge()">🎯 چالش حجم</button>
+        <div class="result-box" id="volumeChallengeBox" style="display:none;">
+          <div class="step-text" id="volumeChallengeText"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;" dir="ltr">
+            <input type="number" id="volumeChallengeAnswer" step="0.01" placeholder="پاسخ">
+            <button class="btn btn-emerald" onclick="checkVolumeChallenge()">بررسی</button>
+          </div>
+          <div id="volumeChallengeResult" style="margin-top:8px;font-weight:bold;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📐 نمایش سه‌بعدی شماتیک و فرمول</div>
+        <div class="canvas-box"><canvas id="volumeCanvas" width="550" height="350"></canvas></div>
+        <div class="result-box" style="margin-top:10px;"><div class="step-text" id="volumeFormula"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>توسعه یافته در بستر رویکرد یادگیری ترکیبی STEAM</p>
+    <p style="margin:6px 0 0;">
+      <span class="designer-badge">طراح: مهندس عرفان صفری</span>
+      <span style="display:block; margin-top:6px; color:#94a3b8; font-weight:700;">گروه ریاضی و هوش مصنوعی اداره ی آموزش و پرورش منطقه بیستون</span>
+
+<span style="display:block; margin-top:6px; color:#94a3b8; font-weight:700;">ارتباط با ما در اپلیکیشن شاد از طریق آیدی Erfan9661@</span>
+
+    </p>
+  </footer>
+</div>
+
+<script>
+  // تغییر تب‌ها
+  function switchTab(index) {
+    const tabs = document.querySelectorAll('.tab-content');
+    const btns = document.querySelectorAll('.tab-btn');
+    tabs.forEach((t, i) => t.classList.toggle('active', i === index));
+    btns.forEach((b, i) => b.classList.toggle('active', i === index));
+    if (index === 0) solveSystem();
+    if (index === 1) updateFunc();
+    if (index === 2) drawPythagoras();
+    if (index === 3) drawVectors();
+    if (index === 4) drawProbChart();
+    if (index === 5) calcStats();
+    if (index === 6) updateAreaShape();
+    if (index === 7) updateIdentityWorkshop();
+    if (index === 8) updateVolumeShape();
+  }
+
+  // آماده‌سازی صفحه مختصات
+  function setupCartesian(ctx, W, H, scale = 25) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+
+    const cx = W / 2;
+    const cy = H / 2;
+
+    // شبکه شطرنجی
+    for (let x = cx % scale; x < W; x += scale) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = cy % scale; y < H; y += scale) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // محورهای اصلی
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+    return { cx, cy, scale };
+  }
+
+  // نمایش خوانای ضریب و متغیر در معادله
+  function fmtTerm(coeff, variable, isFirst = false) {
+    if (coeff === 0) return '';
+    let sign = coeff > 0 ? (isFirst ? '' : '+ ') : (isFirst ? '-' : '- ');
+    let absVal = Math.abs(coeff);
+    let valStr = absVal === 1 ? '' : absVal;
+    return `${sign}${valStr}${variable} `;
+  }
+
+  // --- ۱. دستگاه معادلات خطی به روش حذفی ---
+  function solveSystem() {
+    const a1 = parseFloat(document.getElementById('eq1_a').value) || 0;
+    const b1 = parseFloat(document.getElementById('eq1_b').value) || 0;
+    const c1 = parseFloat(document.getElementById('eq1_c').value) || 0;
+    const a2 = parseFloat(document.getElementById('eq2_a').value) || 0;
+    const b2 = parseFloat(document.getElementById('eq2_b').value) || 0;
+    const c2 = parseFloat(document.getElementById('eq2_c').value) || 0;
+
+    const steps = document.getElementById('systemSteps');
+    const canvas = document.getElementById('systemCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const { cx, cy, scale } = setupCartesian(ctx, W, H, 25);
+
+    // رسم دو خط
+    const drawLine = (a, b, c, color) => {
+      if (a === 0 && b === 0) return;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      let started = false;
+      for (let px = 0; px <= W; px += 5) {
+        const x = (px - cx) / scale;
+        let y = 0;
+        if (Math.abs(b) > 1e-4) {
+          y = (c - a * x) / b;
+        } else {
+          const fixedX = c / a;
+          ctx.beginPath();
+          ctx.moveTo(cx + fixedX * scale, 0);
+          ctx.lineTo(cx + fixedX * scale, H);
+          ctx.stroke();
+          return;
+        }
+        const py = cy - y * scale;
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else { ctx.lineTo(px, py); }
+      }
+      ctx.stroke();
+    };
+
+    drawLine(a1, b1, c1, '#2dd4bf');
+    drawLine(a2, b2, c2, '#f59e0b');
+
+    // بررسی شیب و وضعیت جواب
+    const det = (a1 * b2) - (a2 * b1);
+
+    if (Math.abs(det) < 1e-6) {
+      if ((a1 * c2 - a2 * c1 === 0) && (b1 * c2 - b2 * c1 === 0)) {
+        steps.innerHTML = `<span style="color:#eab308; font-weight:bold;">دو خط بر یکدیگر منطبق هستند (دستگاه بی‌شمار جواب دارد).</span>`;
+      } else {
+        steps.innerHTML = `<span style="color:#ef4444; font-weight:bold;">دو خط با یکدیگر موازی هستند و هیچ برخوردی ندارند (دستگاه جواب ندارد).</span>`;
+      }
+      return;
+    }
+
+    // پیاده‌سازی روش حذفی برای حذف y (ضرب معادله ۱ در b2 و معادله ۲ در -b1)
+    const m1 = b2;
+    const m2 = -b1;
+
+    const na1 = a1 * m1, nb1 = b1 * m1, nc1 = c1 * m1;
+    const na2 = a2 * m2, nb2 = b2 * m2, nc2 = c2 * m2;
+
+    const sumA = na1 + na2;
+    const sumC = nc1 + nc2;
+    const x = sumC / sumA;
+    const y = (c1 - a1 * x) / b1;
+
+    steps.innerHTML = `
+      <b>گام ۱ (یکسان‌کردن ضرایب یکی از مجهول‌ها):</b><br>
+      برای حذف متغیر <span class="highlight">y</span>، معادله (۱) را در <b class="highlight">${m1}</b> و معادله (۲) را در <b class="highlight">${m2}</b> ضرب می‌کنیم:<br>
+      <div style="direction:ltr; text-align:right; font-family:monospace; margin:4px 0; color:#38bdf8;">
+        ${m1 >= 0 ? '× '+m1 : '× ('+m1+')'}: (${a1}x + ${b1}y = ${c1}) ➔ ${na1}x + (${nb1}y) = ${nc1}<br>
+        ${m2 >= 0 ? '× '+m2 : '× ('+m2+')'}: (${a2}x + ${b2}y = ${c2}) ➔ ${na2}x + (${nb2}y) = ${nc2}
+      </div>
+      <b>گام ۲ (جمع دو معادله طرفین با طرفین):</b><br>
+      با جمع دو معادله، متغیر y حذف می‌شود:<br>
+      <span dir="ltr" class="highlight">(${na1} + ${na2})x = ${nc1} + ${nc2} ➔ ${sumA}x = ${sumC}</span><br>
+      بنابراین: <b class="highlight-blue">x = ${sumC} ÷ ${sumA} = ${x.toFixed(2)}</b><br><br>
+      <b>گام ۳ (جایگذاری و یافتن مجهول دیگر):</b><br>
+      مقدار x را در معادله (۱) قرار می‌دهیم:<br>
+      <span dir="ltr" class="highlight">${a1}(${x.toFixed(2)}) + ${b1}y = ${c1} ➔ ${b1}y = ${(c1 - a1*x).toFixed(2)}</span><br>
+      بنابراین: <b class="highlight-blue">y = ${y.toFixed(2)}</b><br>
+      <div style="margin-top:6px; color:#22c55e;">✔ نقطه تقاطع خطوط: <b>[ x = ${x.toFixed(2)} , y = ${y.toFixed(2)} ]</b></div>
+    `;
+
+    // رسم نقطه تقاطع
+    const px = cx + x * scale;
+    const py = cy - y * scale;
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Vazirmatn, Tahoma';
+    ctx.fillText(`(${x.toFixed(1)}, ${y.toFixed(1)})`, px + 8, py - 8);
+  }
+
+  // --- ۲. توابع ---
+  function updateFunc() {
+    const type = document.getElementById('funcType').value;
+    const a = parseFloat(document.getElementById('fn_a').value) || 0;
+    const b = parseFloat(document.getElementById('fn_b').value) || 0;
+    const cBox = document.getElementById('box_fn_c');
+    let c = 0;
+
+    if (type === 'quad') {
+      cBox.style.display = 'block';
+      c = parseFloat(document.getElementById('fn_c').value) || 0;
+    } else {
+      cBox.style.display = 'none';
+    }
+
+    const info = document.getElementById('funcInfo');
+    const canvas = document.getElementById('funcCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const { cx, cy, scale } = setupCartesian(ctx, W, H, 25);
+
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    let started = false;
+
+    for (let px = 0; px <= W; px += 2) {
+      const x = (px - cx) / scale;
+      let y = (type === 'linear') ? (a * x + b) : (a * x * x + b * x + c);
+      const py = cy - y * scale;
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else { ctx.lineTo(px, py); }
+    }
+    ctx.stroke();
+
+    if (type === 'linear') {
+      info.innerHTML = `شیب خط (m): <b class="highlight">${a}</b> | عرض از مبدأ: <b class="highlight">${b}</b>`;
+    } else {
+      const vx = -b / (2 * a || 1);
+      const vy = a * vx * vx + b * vx + c;
+      info.innerHTML = `رأس سهمی: <b class="highlight">(${vx.toFixed(2)}, ${vy.toFixed(2)})</b> | جهت دهانه: <b class="highlight">${a > 0 ? 'رو به بالا' : 'رو به پایین'}</b>`;
+    }
+  }
+
+  // --- ۳. فیثاغورس ---
+  function syncPythFromRange(side) {
+    const range = document.getElementById('side_' + side);
+    const manual = document.getElementById('side_' + side + '_manual');
+    manual.value = range.value;
+    drawPythagoras();
+  }
+
+  function syncPythFromManual(side) {
+    const manual = document.getElementById('side_' + side + '_manual');
+    const range = document.getElementById('side_' + side);
+    const value = parseFloat(manual.value);
+    if (!Number.isFinite(value) || value <= 0) return;
+    // اسلایدر فقط نقش کنترل سریع دارد؛ برای مقادیر خارج از محدوده هم کادر دستی معتبر است.
+    range.value = Math.min(100, Math.max(1, value));
+    drawPythagoras();
+  }
+
+  function drawPythagoras() {
+    const a = parseFloat(document.getElementById('side_a_manual').value) || parseFloat(document.getElementById('side_a').value) || 1;
+    const b = parseFloat(document.getElementById('side_b_manual').value) || parseFloat(document.getElementById('side_b').value) || 1;
+    document.getElementById('val_a').innerText = Number(a.toFixed(4));
+    document.getElementById('val_b').innerText = Number(b.toFixed(4));
+
+    const c = Math.sqrt(a * a + b * b);
+    document.getElementById('pythagorasCalc').innerHTML = `
+      رابطه فیثاغورس: <span class="highlight-blue">وتر² = ضلع اول² + ضلع دوم²</span><br>
+      محاسبه: ${a}² + ${b}² = ${a*a} + ${b*b} = <b class="highlight">${(c*c).toFixed(0)}</b><br>
+      طول وتر (c): <b style="color:#22c55e; font-size:1.1rem;">${c.toFixed(2)}</b>
+    `;
+
+    const canvas = document.getElementById('pythCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // مقیاس پویا تا مثلث و مربع‌ها برای اعداد بزرگ نیز داخل کانواس باقی بمانند.
+    const maxSide = Math.max(a, b, c);
+    const scale = Math.max(0.5, Math.min(14, 250 / maxSide));
+    const ox = Math.max(70, Math.min(170, 145 - b * scale / 2));
+    const oy = 285;
+    const ax = ox + b * scale;
+    const ay = oy - a * scale;
+
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ax, oy);
+    ctx.lineTo(ox, ay);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeRect(ox, oy - 15, 15, 15);
+
+    ctx.fillStyle = 'rgba(45, 212, 191, 0.2)';
+    ctx.strokeStyle = '#2dd4bf';
+    ctx.strokeRect(ox - a * scale, ay, a * scale, a * scale);
+    ctx.fillRect(ox - a * scale, ay, a * scale, a * scale);
+
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+    ctx.strokeStyle = '#f59e0b';
+    ctx.strokeRect(ox, oy, b * scale, b * scale);
+    ctx.fillRect(ox, oy, b * scale, b * scale);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Vazirmatn';
+    ctx.fillText(`a = ${a}`, ox - 40, oy - (a*scale)/2);
+    ctx.fillText(`b = ${b}`, ox + (b*scale)/2 - 10, oy + 20);
+    ctx.fillText(`وتر c = ${c.toFixed(1)}`, ox + (b*scale)/2, ay + (a*scale)/2 - 10);
+  }
+
+  // --- ۴. بردارها ---
+  function drawVectors() {
+    const x1 = parseFloat(document.getElementById('v1_x').value) || 0;
+    const y1 = parseFloat(document.getElementById('v1_y').value) || 0;
+    const x2 = parseFloat(document.getElementById('v2_x').value) || 0;
+    const y2 = parseFloat(document.getElementById('v2_y').value) || 0;
+
+    const rx = x1 + x2;
+    const ry = y1 + y2;
+    const mag = Math.hypot(rx, ry);
+
+    document.getElementById('vectorCalc').innerHTML = `
+      بردار اول: <span style="color:#2dd4bf;">a = [${x1}, ${y1}]</span> | بردار دوم: <span style="color:#f59e0b;">b = [${x2}, ${y2}]</span><br>
+      بردار برآیند (مجموع): <b class="highlight">R = a + b = [${rx}, ${ry}]</b><br>
+      اندازه بردار برآیند: <b class="highlight-blue">${mag.toFixed(2)}</b>
+    `;
+
+    const canvas = document.getElementById('vectorCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    // مقیاس پویا: هر قدر اعداد بزرگ‌تر شوند، واحدها کوچک‌تر می‌شوند
+    // تا نوک برآیند و برچسب آن از نمودار خارج نشود.
+    const maxX = Math.max(Math.abs(x1), Math.abs(x2), Math.abs(rx), 1);
+    const maxY = Math.max(Math.abs(y1), Math.abs(y2), Math.abs(ry), 1);
+    const pad = 55;
+    const scale = Math.max(0.08, Math.min(24, (W / 2 - pad) / maxX, (H / 2 - pad) / maxY));
+
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+
+    // شبکه پویا؛ فاصله شبکه هرگز آن‌قدر کوچک نمی‌شود که به یک لکه تبدیل شود.
+    const rawStep = 50 / scale;
+    const steps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
+    const unitStep = steps.find(v => v >= rawStep) || Math.pow(10, Math.ceil(Math.log10(rawStep)));
+    const gridPx = unitStep * scale;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+    for (let x = cx % gridPx; x < W; x += gridPx) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = cy % gridPx; y < H; y += gridPx) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+    // برچسب چند خط اصلی محور
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '10px Vazirmatn, Tahoma';
+    ctx.textAlign = 'center';
+    for (let k = -5; k <= 5; k++) {
+      if (k === 0) continue;
+      const vx = cx + k * gridPx;
+      const vy = cy - k * gridPx;
+      if (vx > 15 && vx < W - 15) ctx.fillText(formatLargeNumber(k * unitStep), vx, cy + 15);
+      if (vy > 15 && vy < H - 15) ctx.fillText(formatLargeNumber(k * unitStep), cx - 16, vy + 4);
+    }
+    ctx.textAlign = 'start';
+
+    function formatLargeNumber(v) {
+      const av = Math.abs(v);
+      if (av >= 1000000) return (v / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+      if (av >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+      return String(Number(v.toFixed(4)));
+    }
+
+    function drawArrow(x, y, color, label, width = 3) {
+      if (x === 0 && y === 0) return;
+      const targetX = cx + x * scale;
+      const targetY = cy - y * scale;
+      const angle = Math.atan2(-(y * scale), x * scale);
+
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(targetX, targetY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(targetX, targetY);
+      ctx.lineTo(targetX - 11 * Math.cos(angle - Math.PI / 6), targetY + 11 * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(targetX - 11 * Math.cos(angle + Math.PI / 6), targetY + 11 * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+
+      // برچسب همیشه داخل محدوده کانواس قرار می‌گیرد.
+      ctx.font = 'bold 12px Vazirmatn, Tahoma';
+      const margin = 8;
+      const labelW = ctx.measureText(label).width;
+      let lx = targetX + (x >= 0 ? 9 : -labelW - 9);
+      let ly = targetY + (y >= 0 ? -9 : 18);
+      lx = Math.max(margin, Math.min(W - labelW - margin, lx));
+      ly = Math.max(16, Math.min(H - 8, ly));
+      ctx.fillText(label, lx, ly);
+    }
+
+    drawArrow(x1, y1, '#2dd4bf', 'a');
+    drawArrow(x2, y2, '#f59e0b', 'b');
+    drawArrow(rx, ry, '#ef4444', 'R (برآیند)', 4);
+
+    // مقدار عددی برآیند را نزدیک مرکز نیز نمایش می‌دهیم تا در اعداد خیلی بزرگ خوانا بماند.
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 12px Vazirmatn, Tahoma';
+    ctx.fillText(`R = [${formatLargeNumber(rx)}, ${formatLargeNumber(ry)}]`, 12, 22);
+  }
+
+  // --- ۵. احتمال ---
+  let diceHistory = [0, 0, 0, 0, 0, 0];
+  let totalRolls = 0;
+
+  function rollDice(times) {
+    for (let i = 0; i < times; i++) {
+      const side = Math.floor(Math.random() * 6);
+      diceHistory[side]++;
+      totalRolls++;
+    }
+    document.getElementById('diceStats').innerText = `کل پرتاب‌ها: ${totalRolls} | تئوری هر شانس: ${(100/6).toFixed(1)}%`;
+    drawProbChart();
+  }
+
+  function resetDice() {
+    diceHistory = [0, 0, 0, 0, 0, 0];
+    totalRolls = 0;
+    document.getElementById('diceStats').innerText = 'کل پرتاب‌ها: ۰';
+    drawProbChart();
+  }
+
+  function drawProbChart() {
+    const canvas = document.getElementById('probCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const barWidth = 40;
+    const gap = (W - 60 - barWidth * 6) / 5;
+
+    for (let i = 0; i < 6; i++) {
+      const count = diceHistory[i];
+      const pct = totalRolls > 0 ? (count / totalRolls) : 0;
+      const barH = pct * (H - 80);
+      const x = 30 + i * (barWidth + gap);
+      const y = H - 40 - barH;
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(x, y, barWidth, barH);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '13px Vazirmatn';
+      ctx.textAlign = 'center';
+      ctx.fillText(`عدد ${i+1}`, x + barWidth / 2, H - 15);
+      ctx.fillText(`${(pct * 100).toFixed(1)}%`, x + barWidth / 2, y - 8);
+    }
+    ctx.textAlign = 'start';
+  }
+
+  // --- ۶. آمار ---
+  function calcStats() {
+    const raw = document.getElementById('dataInput').value;
+    const nums = raw.split(/[,،]+/).map(n => parseFloat(n.trim())).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const box = document.getElementById('statResults');
+
+    if (nums.length === 0) {
+      box.innerHTML = 'لطفاً داده‌های معتبر وارد نمایید.';
+      return;
+    }
+
+    const n = nums.length;
+    const sum = nums.reduce((a, b) => a + b, 0);
+    const mean = sum / n;
+    const min = nums[0];
+    const max = nums[n - 1];
+    const median = (n % 2 === 0) ? (nums[n / 2 - 1] + nums[n / 2]) / 2 : nums[Math.floor(n / 2)];
+    const range = max - min;
+
+    // نما (مد): ممکن است چند مد یا اصلاً مد وجود نداشته باشد.
+    const freq = {};
+    nums.forEach(v => { freq[v] = (freq[v] || 0) + 1; });
+    const maxFreq = Math.max(...Object.values(freq));
+    const modes = maxFreq > 1
+      ? Object.keys(freq).filter(v => freq[v] === maxFreq).map(Number)
+      : [];
+
+    // واریانس جامعه و انحراف معیار جامعه؛ مناسب تحلیل مجموعه داده واردشده.
+    const variance = nums.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / n;
+    const stdDev = Math.sqrt(variance);
+
+    // چارک‌ها برای تحلیل کامل‌تر توزیع داده‌ها
+    const lower = nums.slice(0, Math.floor(n / 2));
+    const upper = nums.slice(Math.ceil(n / 2));
+    const medianOf = arr => {
+      if (!arr.length) return null;
+      return arr.length % 2 ? arr[Math.floor(arr.length / 2)] : (arr[arr.length / 2 - 1] + arr[arr.length / 2]) / 2;
+    };
+    const q1 = medianOf(lower);
+    const q3 = medianOf(upper);
+    const iqr = (q1 !== null && q3 !== null) ? q3 - q1 : null;
+
+    const modeText = modes.length ? modes.join(' ، ') + ` (تکرار: ${maxFreq})` : 'ندارد (همه داده‌ها متفاوت‌اند)';
+
+    box.innerHTML = `
+      تعداد داده‌ها: <b class="highlight">${n}</b> | مجموع: <b class="highlight">${sum.toFixed(2)}</b><br>
+      میانگین: <b class="highlight-blue">${mean.toFixed(2)}</b><br>
+      میانه: <b class="highlight">${median.toFixed(2)}</b><br>
+      نما (مد): <b class="highlight">${modeText}</b><br>
+      دامنه تغییرات: <b class="highlight">${range.toFixed(2)}</b> <span style="color:#94a3b8;">(بیشترین − کمترین)</span><br>
+      واریانس: <b class="highlight-blue">${variance.toFixed(2)}</b><br>
+      انحراف معیار: <b class="highlight-blue">${stdDev.toFixed(2)}</b><br>
+      چارک اول (Q1): <b class="highlight">${q1 === null ? '—' : q1.toFixed(2)}</b> |
+      چارک سوم (Q3): <b class="highlight">${q3 === null ? '—' : q3.toFixed(2)}</b><br>
+      فاصله بین چارکی (IQR): <b class="highlight">${iqr === null ? '—' : iqr.toFixed(2)}</b>
+    `;
+
+    const canvas = document.getElementById('statCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const barW = Math.min(35, (W - 40) / n);
+    const maxAbs = Math.max(...nums.map(v => Math.abs(v)), 1);
+    nums.forEach((val, i) => {
+      const h = (Math.abs(val) / maxAbs) * (H - 85);
+      const x = 20 + i * (barW + 5);
+      const baseY = H - 35;
+      const y = val >= 0 ? baseY - h : baseY;
+
+      ctx.fillStyle = '#818cf8';
+      ctx.fillRect(x, y, barW, h);
+
+      ctx.fillStyle = '#fff';
+      ctx.font = '10px Vazirmatn';
+      ctx.fillText(val, x + 4, val >= 0 ? y - 6 : y + h + 12);
+    });
+  }
+
+
+
+  // --- ۸. کارگاه تعاملی اتحادها ---
+  function identityNum(v){
+    if(!Number.isFinite(v)) return 0;
+    return Math.abs(v-Math.round(v)) < 1e-10 ? String(Math.round(v)) : v.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+  }
+
+  function updateIdentityWorkshop(){
+    const type=document.getElementById('identityType').value;
+    const a=parseFloat(document.getElementById('identityA').value) || 0;
+    const b=parseFloat(document.getElementById('identityB').value) || 0;
+    const A=identityNum(a), B=identityNum(b);
+    let formula='', result='', tip='';
+    if(type==='sumSquare'){
+      const ans=(a+b)**2;
+      formula='(a + b)² = a² + 2ab + b²';
+      result=`(${A} + ${B})² = ${identityNum(a*a)} + 2(${A}×${B}) + ${identityNum(b*b)} = <b class="highlight">${identityNum(ans)}</b>`;
+      tip='مربع مجموع برابر است با مربع جمله اول + دو برابر حاصل‌ضرب دو جمله + مربع جمله دوم.';
+    } else if(type==='diffSquare'){
+      const ans=(a-b)**2;
+      formula='(a - b)² = a² - 2ab + b²';
+      result=`(${A} - ${B})² = ${identityNum(a*a)} - 2(${A}×${B}) + ${identityNum(b*b)} = <b class="highlight">${identityNum(ans)}</b>`;
+      tip='در مربع تفاضل، جمله میانی منفی است: مربع اول − دو برابر حاصل‌ضرب + مربع دوم.';
+    } else if(type==='sumDiff'){
+      const ans=a*a-b*b;
+      formula='(a + b)(a - b) = a² - b²';
+      result=`(${A} + ${B})(${A} - ${B}) = ${identityNum(a*a)} - ${identityNum(b*b)} = <b class="highlight">${identityNum(ans)}</b>`;
+      tip='در اتحاد مزدوج، دو عبارت فقط در علامت وسط تفاوت دارند و نتیجه تفاضل دو مربع است.';
+    } else {
+      const ans=(a+b)*a + (a+b)*b; // فقط برای محاسبه نمایشی
+      const x2=a*a, mid=a+b, con=a*b;
+      formula='(x + a)(x + b) = x² + (a + b)x + ab';
+      result=`(x + ${A})(x + ${B}) = x² + (${A} + ${B})x + (${A}×${B}) = <b class="highlight">x² + ${identityNum(mid)}x + ${identityNum(con)}</b>`;
+      tip='در اتحاد جمله مشترک، x جمله مشترک دو پرانتز است. ضریب x از جمع دو عدد داخل پرانتز و جمله ثابت از ضرب آن دو عدد به دست می‌آید.';
+    }
+    document.getElementById('identityFormula').innerHTML='<b>'+formula+'</b>';
+    document.getElementById('identityResult').innerHTML=result;
+    document.getElementById('identityTip').innerHTML=tip;
+    drawIdentityCanvas(type,a,b);
+  }
+
+  function drawIdentityCanvas(type,a,b){
+    const c=document.getElementById('identityCanvas'); if(!c)return;
+    const ctx=c.getContext('2d'), W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0b1220';ctx.fillRect(0,0,W,H);
+    const aa=Math.max(Math.abs(a),0.5), bb=Math.max(Math.abs(b),0.5);
+    const total=aa+bb, scale=Math.min(190/total,190/Math.max(aa,bb));
+    const x0=55,y0=45;
+    ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;
+    ctx.fillStyle='rgba(45,212,191,.12)';ctx.fillRect(x0,y0,total*scale,total*scale);ctx.strokeRect(x0,y0,total*scale,total*scale);
+    ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(x0+aa*scale,y0);ctx.lineTo(x0+aa*scale,y0+total*scale);ctx.moveTo(x0,y0+aa*scale);ctx.lineTo(x0+total*scale,y0+aa*scale);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';
+    ctx.fillStyle='#fff';
+    ctx.fillText('a',x0+aa*scale/2,y0-10);ctx.fillText('b',x0+aa*scale+bb*scale/2,y0-10);
+    ctx.fillText('a',x0-18,y0+aa*scale/2);ctx.fillText('b',x0-18,y0+aa*scale+bb*scale/2);
+    ctx.fillStyle='#2dd4bf';ctx.fillText('a²',x0+aa*scale/2,y0+aa*scale/2+5);
+    ctx.fillText('ab',x0+aa*scale+bb*scale/2,y0+aa*scale/2+5);
+    ctx.fillText('ab',x0+aa*scale/2,y0+aa*scale+bb*scale/2+5);
+    ctx.fillStyle='#fbbf24';ctx.fillText('b²',x0+aa*scale+bb*scale/2,y0+aa*scale+bb*scale/2+5);
+    ctx.fillStyle='#cbd5e1';ctx.font='12px Vazirmatn';
+    let caption=type==='sumSquare'?'نمایش (a+b)²':type==='diffSquare'?'ایده هندسی مربع تفاضل':type==='sumDiff'?'ایده هندسی اتحاد مزدوج':'ایده اتحاد جمله مشترک';
+    ctx.fillText(caption,W/2,H-18);ctx.textAlign='start';
+  }
+
+  function recognizeIdentity(){
+    const raw=document.getElementById('identityExpression').value.trim().replace(/\s+/g,'');
+    const out=document.getElementById('identityRecognition');
+    if(!raw){out.innerHTML='لطفاً یک عبارت وارد کنید.';return;}
+    let msg='';
+    let m=raw.match(/^([a-zA-Z])²([+]\d+)?([a-zA-Z])?$/);
+    if(/^([a-zA-Z])²\+([0-9]+)\1\+([0-9]+)$/.test(raw)){
+      const z=raw.match(/^([a-zA-Z])²\+([0-9]+)\1\+([0-9]+)$/), x=z[1], mid=+z[2], last=+z[3], r=Math.sqrt(last);
+      if(Number.isInteger(r) && 2*r===mid) msg=`✔ اتحاد مربع مجموع: <b>(${x} + ${r})²</b>`;
+    } else if(/^([a-zA-Z])²-([0-9]+)\1\+([0-9]+)$/.test(raw)){
+      const z=raw.match(/^([a-zA-Z])²-([0-9]+)\1\+([0-9]+)$/), x=z[1], mid=+z[2], last=+z[3], r=Math.sqrt(last);
+      if(Number.isInteger(r) && 2*r===mid) msg=`✔ اتحاد مربع تفاضل: <b>(${x} - ${r})²</b>`;
+    } else {
+      const z=raw.match(/^([a-zA-Z])²-([0-9]+)$/);
+      if(z){const r=Math.sqrt(+z[2]); if(Number.isInteger(r)) msg=`✔ اتحاد مجموع و تفاضل: <b>(${z[1]} + ${r})(${z[1]} - ${r})</b>`;}
+    }
+    out.innerHTML=msg || 'این عبارت با الگوهای سه اتحاد اصلی این کارگاه تطبیق داده نشد.';
+  }
+
+  let identityChallenge=null;
+  function newIdentityChallenge(){
+    const types=['sumSquare','diffSquare','sumDiff','commonTerm'];
+    const type=types[Math.floor(Math.random()*types.length)];
+    const a=Math.floor(Math.random()*7)+2, b=Math.floor(Math.random()*5)+1;
+    identityChallenge={type,a,b};
+    let expr=type==='sumSquare'?`(${a} + ${b})²`:type==='diffSquare'?`(${a} - ${b})²`:type==='sumDiff'?`(${a} + ${b})(${a} - ${b})`:`(x + ${a})(x + ${b})`;
+    document.getElementById('identityChallengeText').innerHTML=`<b>${expr}</b>`;
+    document.getElementById('identityChallengeAnswer').value='';
+    document.getElementById('identityChallengeResult').innerHTML='';
+  }
+  function checkIdentityChallenge(){
+    if(!identityChallenge)newIdentityChallenge();
+    const ans=document.getElementById('identityChallengeAnswer').value, out=document.getElementById('identityChallengeResult');
+    if(!ans){out.innerHTML='لطفاً یک گزینه انتخاب کنید.';return;}
+    out.innerHTML=ans===identityChallenge.type ? '<span style="color:#22c55e">✔ پاسخ صحیح است؛ آفرین!</span>' : '<span style="color:#ef4444">✘ پاسخ نادرست است. دوباره تلاش کنید.</span>';
+  }
+  // --- ۷. کارگاه مساحت اشکال ---
+  const areaConfig = {
+    square: {
+      fields: [['side','ضلع','6']],
+      formula: 'A = a²',
+      calc: v => v.side * v.side,
+      text: v => `A = ${v.side}² = <b class="highlight">${(v.side*v.side).toFixed(2)}</b>`
+    },
+    rectangle: {
+      fields: [['length','طول','8'],['width','عرض','5']],
+      formula: 'A = طول × عرض',
+      calc: v => v.length * v.width,
+      text: v => `A = ${v.length} × ${v.width} = <b class="highlight">${(v.length*v.width).toFixed(2)}</b>`
+    },
+    triangle: {
+      fields: [['base','قاعده','10'],['height','ارتفاع','6']],
+      formula: 'A = (قاعده × ارتفاع) ÷ 2',
+      calc: v => v.base * v.height / 2,
+      text: v => `A = (${v.base} × ${v.height}) ÷ 2 = <b class="highlight">${(v.base*v.height/2).toFixed(2)}</b>`
+    },
+    parallelogram: {
+      fields: [['base','قاعده','8'],['height','ارتفاع','5']],
+      formula: 'A = قاعده × ارتفاع',
+      calc: v => v.base * v.height,
+      text: v => `A = ${v.base} × ${v.height} = <b class="highlight">${(v.base*v.height).toFixed(2)}</b>`
+    },
+    rhombus: {
+      fields: [['d1','قطر اول','8'],['d2','قطر دوم','6']],
+      formula: 'A = (قطر اول × قطر دوم) ÷ 2',
+      calc: v => v.d1 * v.d2 / 2,
+      text: v => `A = (${v.d1} × ${v.d2}) ÷ 2 = <b class="highlight">${(v.d1*v.d2/2).toFixed(2)}</b>`
+    },
+    trapezoid: {
+      fields: [['base1','قاعده بزرگ','10'],['base2','قاعده کوچک','6'],['height','ارتفاع','5']],
+      formula: 'A = ((قاعده بزرگ + قاعده کوچک) × ارتفاع) ÷ 2',
+      calc: v => (v.base1 + v.base2) * v.height / 2,
+      text: v => `A = ((${v.base1} + ${v.base2}) × ${v.height}) ÷ 2 = <b class="highlight">${((v.base1+v.base2)*v.height/2).toFixed(2)}</b>`
+    },
+    circle: {
+      fields: [['radius','شعاع','5']],
+      formula: 'A = πr²',
+      calc: v => Math.PI * v.radius * v.radius,
+      text: v => `A = π × ${v.radius}² ≈ <b class="highlight">${(Math.PI*v.radius*v.radius).toFixed(2)}</b>`
+    }
+  };
+
+  function getAreaValues() {
+    const shape = document.getElementById('areaShape').value;
+    const cfg = areaConfig[shape], vals = {};
+    cfg.fields.forEach(f => vals[f[0]] = Math.max(0, parseFloat(document.getElementById('area_'+f[0]).value) || 0));
+    return vals;
+  }
+
+  function updateAreaShape() {
+    const shape = document.getElementById('areaShape').value;
+    const cfg = areaConfig[shape];
+    const inputs = document.getElementById('areaInputs');
+    inputs.innerHTML = cfg.fields.map(f => `
+      <div><label>${f[1]}:</label>
+      <input type="number" id="area_${f[0]}" value="${f[2]}" min="0" step="0.01" oninput="updateAreaCalculation()"></div>
+    `).join('');
+    document.getElementById('areaFormula').innerHTML = `فرمول: <b class="highlight-blue" dir="ltr">${cfg.formula}</b>`;
+    updateAreaCalculation();
+    drawAreaShape();
+  }
+
+  function updateAreaCalculation() {
+    const shape = document.getElementById('areaShape').value;
+    const cfg = areaConfig[shape];
+    const v = getAreaValues();
+    document.getElementById('areaCalc').innerHTML = `${cfg.text(v)} واحد مربع`;
+    drawAreaShape();
+  }
+
+  function drawAreaShape() {
+    const canvas = document.getElementById('areaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const shape = document.getElementById('areaShape').value, v=getAreaValues();
+    const maxDim = Math.max(v.side||0,v.length||0,v.width||0,v.base||0,v.height||0,v.d1||0,v.d2||0,v.base1||0,v.base2||0,v.radius||0,1);
+    const scale = Math.min(180/maxDim, 18);
+    const cx=W/2, cy=H/2+15;
+    ctx.fillStyle='rgba(56,189,248,0.20)'; ctx.strokeStyle='#38bdf8'; ctx.lineWidth=3;
+    ctx.beginPath();
+
+    if(shape==='square'){
+      const d=v.side*scale,x=cx-d/2,y=cy-d/2; ctx.rect(x,y,d,d); ctx.fill();ctx.stroke(); labelArea(ctx,`ضلع = ${v.side}`,cx, y-10);
+    } else if(shape==='rectangle'){
+      const d1=v.length*scale,d2=v.width*scale,x=cx-d1/2,y=cy-d2/2;ctx.rect(x,y,d1,d2);ctx.fill();ctx.stroke();
+      labelArea(ctx,`طول = ${v.length}`,cx,y-10); labelArea(ctx,`عرض = ${v.width}`,x-55,cy);
+    } else if(shape==='triangle'){
+      const b=v.base*scale,h=v.height*scale,x=cx-b/2,y=cy+h/2;ctx.moveTo(x,y);ctx.lineTo(x+b,y);ctx.lineTo(x,y-h);ctx.closePath();ctx.fill();ctx.stroke();
+      labelArea(ctx,`قاعده = ${v.base}`,cx,y+22);labelArea(ctx,`ارتفاع = ${v.height}`,x-65,cy-h/2);
+    } else if(shape==='parallelogram'){
+      const b=v.base*scale,h=v.height*scale,skew=Math.min(b*.3,60),x=cx-b/2,y=cy-h/2;ctx.moveTo(x+skew,y);ctx.lineTo(x+b+skew,y);ctx.lineTo(x+b,y+h);ctx.lineTo(x,y+h);ctx.closePath();ctx.fill();ctx.stroke();
+      labelArea(ctx,`قاعده = ${v.base}`,cx,y-10);labelArea(ctx,`ارتفاع = ${v.height}`,x-60,cy);
+    } else if(shape==='rhombus'){
+      const d1=v.d1*scale,d2=v.d2*scale;ctx.moveTo(cx,cy-d2/2);ctx.lineTo(cx+d1/2,cy);ctx.lineTo(cx,cy+d2/2);ctx.lineTo(cx-d1/2,cy);ctx.closePath();ctx.fill();ctx.stroke();
+      labelArea(ctx,`قطر اول = ${v.d1}`,cx,cy+d2/2+22);labelArea(ctx,`قطر دوم = ${v.d2}`,cx+10,cy-d2/2-10);
+    } else if(shape==='trapezoid'){
+      const b1=v.base1*scale,b2=v.base2*scale,h=v.height*scale,x=cx-b1/2,y=cy-h/2;ctx.moveTo(x,y+h);ctx.lineTo(x+b1,y+h);ctx.lineTo(cx+b2/2,y);ctx.lineTo(cx-b2/2,y);ctx.closePath();ctx.fill();ctx.stroke();
+      labelArea(ctx,`قاعده بزرگ = ${v.base1}`,cx,y+h+22);labelArea(ctx,`قاعده کوچک = ${v.base2}`,cx,y-10);labelArea(ctx,`ارتفاع = ${v.height}`,x-70,cy);
+    } else if(shape==='circle'){
+      const r=v.radius*scale;ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r,cy);ctx.stroke();labelArea(ctx,`شعاع = ${v.radius}`,cx+r/2,cy-10);
+    }
+    ctx.fillStyle='#cbd5e1';ctx.font='bold 14px Vazirmatn';ctx.textAlign='center';ctx.fillText('نمایش شماتیک شکل',cx,H-15);ctx.textAlign='start';
+  }
+
+  function labelArea(ctx,text,x,y){
+    ctx.fillStyle='#fff';ctx.font='13px Vazirmatn';ctx.textAlign='center';ctx.fillText(text,Math.max(45,Math.min(505,x)),Math.max(18,Math.min(330,y)));ctx.textAlign='start';
+  }
+
+  let areaChallenge = null;
+  function newAreaChallenge(){
+    const shapes=Object.keys(areaConfig), shape=shapes[Math.floor(Math.random()*shapes.length)], cfg=areaConfig[shape];
+    const v={}; cfg.fields.forEach(f=>v[f[0]]=Math.floor(Math.random()*9)+2);
+    areaChallenge={shape,v,answer:cfg.calc(v)};
+    document.getElementById('areaChallengeBox').style.display='block';
+    document.getElementById('areaChallengeText').innerHTML=`مساحت <b>${shape==='square'?'مربع':shape==='rectangle'?'مستطیل':shape==='triangle'?'مثلث':shape==='parallelogram'?'متوازی‌الاضلاع':shape==='rhombus'?'لوزی':shape==='trapezoid'?'ذوزنقه':'دایره'}</b> را با اندازه‌های زیر به دست آورید:<br>`+
+      cfg.fields.map(f=>`${f[1]} = <b class="highlight">${v[f[0]]}</b>`).join(' | ');
+    document.getElementById('areaChallengeAnswer').value='';
+    document.getElementById('areaChallengeResult').innerHTML='';
+  }
+  function checkAreaChallenge(){
+    if(!areaChallenge)return;
+    const ans=parseFloat(document.getElementById('areaChallengeAnswer').value);
+    const ok=Math.abs(ans-areaChallenge.answer)<0.01;
+    document.getElementById('areaChallengeResult').innerHTML=ok
+      ? '<span style="color:#22c55e;">✔ آفرین! پاسخ صحیح است.</span>'
+      : `<span style="color:#ef4444;">✘ پاسخ نادرست است. پاسخ صحیح: ${areaChallenge.answer.toFixed(2)}</span>`;
+  }
+
+
+  // --- ۹. کارگاه حجم اشکال ساده ---
+  const volumeConfig={
+    cube:{name:'مکعب',fields:[['side','ضلع','4']],formula:'V = a³',calc:v=>v.side**3,text:v=>`V = ${v.side}³ = <b class="highlight">${(v.side**3).toFixed(2)}</b>`},
+    cuboid:{name:'مکعب‌مستطیل',fields:[['length','طول','6'],['width','عرض','4'],['height','ارتفاع','3']],formula:'V = طول × عرض × ارتفاع',calc:v=>v.length*v.width*v.height,text:v=>`V = ${v.length} × ${v.width} × ${v.height} = <b class="highlight">${(v.length*v.width*v.height).toFixed(2)}</b>`},
+    cylinder:{name:'استوانه',fields:[['radius','شعاع','3'],['height','ارتفاع','5']],formula:'V = πr²h',calc:v=>Math.PI*v.radius*v.radius*v.height,text:v=>`V = π × ${v.radius}² × ${v.height} ≈ <b class="highlight">${(Math.PI*v.radius*v.radius*v.height).toFixed(2)}</b>`},
+    prism:{name:'منشور ساده',fields:[['baseArea','مساحت قاعده','12'],['height','ارتفاع','5']],formula:'V = مساحت قاعده × ارتفاع',calc:v=>v.baseArea*v.height,text:v=>`V = ${v.baseArea} × ${v.height} = <b class="highlight">${(v.baseArea*v.height).toFixed(2)}</b>`},
+    pyramid:{name:'هرم ساده',fields:[['baseArea','مساحت قاعده','12'],['height','ارتفاع','6']],formula:'V = (مساحت قاعده × ارتفاع) ÷ 3',calc:v=>v.baseArea*v.height/3,text:v=>`V = (${v.baseArea} × ${v.height}) ÷ 3 = <b class="highlight">${(v.baseArea*v.height/3).toFixed(2)}</b>`}
+  };
+  function getVolumeValues(){const cfg=volumeConfig[document.getElementById('volumeShape').value],v={};cfg.fields.forEach(f=>v[f[0]]=Math.max(0,parseFloat(document.getElementById('volume_'+f[0]).value)||0));return v;}
+  function updateVolumeShape(){const shape=document.getElementById('volumeShape').value,cfg=volumeConfig[shape];document.getElementById('volumeInputs').innerHTML=cfg.fields.map(f=>`<div><label>${f[1]}:</label><input type="number" id="volume_${f[0]}" value="${f[2]}" min="0" step="0.01" oninput="updateVolumeCalculation()"></div>`).join('');document.getElementById('volumeFormula').innerHTML=`فرمول: <b class="highlight-blue" dir="ltr">${cfg.formula}</b>`;updateVolumeCalculation();}
+  function updateVolumeCalculation(){const shape=document.getElementById('volumeShape').value,cfg=volumeConfig[shape],v=getVolumeValues();document.getElementById('volumeCalc').innerHTML=cfg.text(v)+' واحد مکعب';drawVolumeShape();}
+  function drawVolumeShape(){const c=document.getElementById('volumeCanvas');if(!c)return;const ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#0b1220';ctx.fillRect(0,0,W,H);const shape=document.getElementById('volumeShape').value,v=getVolumeValues();ctx.strokeStyle='#38bdf8';ctx.fillStyle='rgba(56,189,248,.18)';ctx.lineWidth=3;const ox=145,oy=95,s=18;ctx.beginPath();
+    if(shape==='cube'){const d=Math.min(150,v.side*s),off=d*.28;ctx.rect(ox,oy,d,d);ctx.fill();ctx.stroke();ctx.strokeRect(ox+off,oy-off,d,d);ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+off,oy-off);ctx.moveTo(ox+d,oy);ctx.lineTo(ox+d+off,oy-off);ctx.moveTo(ox,oy+d);ctx.lineTo(ox+off,oy+d-off);ctx.stroke();ctx.fillStyle='#fff';ctx.font='14px Vazirmatn';ctx.fillText(`ضلع = ${v.side}`,ox+d/2-35,oy+d+28);}
+    else if(shape==='cuboid'){const L=Math.min(190,v.length*s),D=Math.min(90,v.width*s),Hh=Math.min(160,v.height*s),off=28;ctx.rect(ox,oy+Hh-D,L,D);ctx.fill();ctx.stroke();ctx.strokeRect(ox+off,oy,L,D);ctx.beginPath();ctx.moveTo(ox,oy+Hh-D);ctx.lineTo(ox+off,oy);ctx.moveTo(ox+L,oy+Hh-D);ctx.lineTo(ox+L+off,oy);ctx.moveTo(ox,oy+Hh);ctx.lineTo(ox+off,oy+D);ctx.stroke();ctx.fillStyle='#fff';ctx.font='13px Vazirmatn';ctx.fillText(`طول=${v.length}  عرض=${v.width}  ارتفاع=${v.height}`,110,305);}
+    else if(shape==='cylinder'){const r=Math.min(80,v.radius*s),h=Math.min(190,v.height*s),x=275,y=80;ctx.beginPath();ctx.ellipse(x,y,r,r*.35,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x-r,y+h);ctx.ellipse(x,y+h,r,r*.35,0,0,Math.PI);ctx.moveTo(x+r,y);ctx.lineTo(x+r,y+h);ctx.stroke();ctx.fillStyle='#fff';ctx.font='13px Vazirmatn';ctx.fillText(`r = ${v.radius}   h = ${v.height}`,205,315);}
+    else {const base=Math.min(180,(v.baseArea||12)*8),hh=Math.min(180,v.height*s),x=275,y=280;ctx.moveTo(x-base/2,y);ctx.lineTo(x+base/2,y);ctx.lineTo(x+base*.35,y-hh*.15);ctx.lineTo(x,y-hh);ctx.closePath();ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x,y-hh);ctx.lineTo(x-base/2,y);ctx.moveTo(x,y-hh);ctx.lineTo(x+base/2,y);ctx.stroke();ctx.fillStyle='#fff';ctx.font='13px Vazirmatn';ctx.fillText(`${volumeConfig[shape].name} | ارتفاع = ${v.height}`,175,320);}ctx.textAlign='center';ctx.fillStyle='#cbd5e1';ctx.font='bold 14px Vazirmatn';ctx.fillText('نمایش شماتیک جسم',W/2,H-15);ctx.textAlign='start';}
+  let volumeChallenge=null;
+  function newVolumeChallenge(){const keys=Object.keys(volumeConfig),shape=keys[Math.floor(Math.random()*keys.length)],cfg=volumeConfig[shape],v={};cfg.fields.forEach(f=>v[f[0]]=Math.floor(Math.random()*7)+2);volumeChallenge={shape,v,answer:cfg.calc(v)};document.getElementById('volumeChallengeBox').style.display='block';document.getElementById('volumeChallengeText').innerHTML=`حجم <b>${cfg.name}</b> را به دست آورید:<br>`+cfg.fields.map(f=>`${f[1]} = <b class="highlight">${v[f[0]]}</b>`).join(' | ');document.getElementById('volumeChallengeAnswer').value='';document.getElementById('volumeChallengeResult').innerHTML='';}
+  function checkVolumeChallenge(){if(!volumeChallenge)return;const ans=parseFloat(document.getElementById('volumeChallengeAnswer').value);document.getElementById('volumeChallengeResult').innerHTML=Math.abs(ans-volumeChallenge.answer)<.01? '<span style="color:#22c55e">✔ پاسخ صحیح است.</span>' :`<span style="color:#ef4444">✘ پاسخ نادرست است. پاسخ صحیح: ${volumeChallenge.answer.toFixed(2)}</span>`;}
+  function recognizeIdentityFromInputs(){
+    const x=(document.getElementById('identityVar').value||'x').trim(),
+      k=parseFloat(document.getElementById('identityK').value),
+      mid=parseFloat(document.getElementById('identityMid').value),
+      con=parseFloat(document.getElementById('identityConst').value),
+      out=document.getElementById('identityRecognition');
+    if(!x||!Number.isFinite(mid)||!Number.isFinite(con)){
+      out.innerHTML='لطفاً ضریب جمله میانی و عدد ثابت را وارد کنید.';return;
+    }
+    const r=Math.sqrt(con);
+    if(Number.isFinite(r)&&Math.abs(2*r-Math.abs(mid))<1e-9){
+      const sign=mid>=0?'+':'-';
+      out.innerHTML=`✔ مربع ${mid>=0?'مجموع':'تفاضل'} تشخیص داده شد: <b dir="ltr">(${x} ${sign} ${r})²</b><br>یعنی: <b dir="ltr">${x}² ${mid>=0?'+':'-'} ${Math.abs(mid)}${x} + ${con}</b>`;
+    }else{
+      out.innerHTML='این ضرایب با مربع مجموع یا مربع تفاضل سازگار نیستند. برای تشخیص اتحاد جمله مشترک، از بخش پایین استفاده کنید.';
+    }
+  }
+
+  function showCommonTermIdentity(){
+    const a=parseFloat(document.getElementById('commonA').value),
+      b=parseFloat(document.getElementById('commonB').value),
+      out=document.getElementById('commonTermResult');
+    if(!Number.isFinite(a)||!Number.isFinite(b)){out.innerHTML='لطفاً هر دو عدد را وارد کنید.';return;}
+    const A=identityNum(a),B=identityNum(b),sum=identityNum(a+b),prod=identityNum(a*b);
+    out.innerHTML=`<b dir="ltr">(x + ${A})(x + ${B}) = x² + (${A} + ${B})x + (${A} × ${B})</b><br>
+      <span style="color:#2dd4bf;">✔ نتیجه:</span> <b dir="ltr">x² + ${sum}x + ${prod}</b><br>
+      <span style="color:#94a3b8;">جمع دو عدد: ${sum} ← ضریب x &nbsp;&nbsp; | &nbsp;&nbsp; ضرب دو عدد: ${prod} ← جمله ثابت</span>`;
+  }
+
+  // اجرا در شروع برنامه
+  window.onload = () => {
+    solveSystem();
+    drawPythagoras();
+    drawVectors();
+    drawProbChart();
+    calcStats();
+    updateAreaShape();
+    updateIdentityWorkshop();
+    newIdentityChallenge();
+    updateVolumeShape();
+  };
+</script>
+
+</body>
+</html>
